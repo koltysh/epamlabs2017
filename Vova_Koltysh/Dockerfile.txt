@@ -1,0 +1,18 @@
+﻿FROM ubuntu:16.04
+
+MAINTAINER Vova Koltysh
+#copy bin file with confluence to /home folder on container
+COPY atlassian-confluence-6.5.2-x64.bin  /home
+#copy response.varfile file that contains the options specified during the installation wizard steps 
+COPY response.varfile /home
+
+RUN apt update \
+#set up permissios for bin file
+ && chmod 755 /home/atlassian-confluence-6.5.2-x64.bin \
+#run bin file from /home directory with response file
+ && ./home/atlassian-confluence-6.5.2-x64.bin -q -varfile response.varfile \
+#install busybox and vim 
+ && apt install -y busybox vim  \
+#clean all cashes after instalation, it will decrease total size of container
+ && apt clean
+CMD ["./opt/atlassian/confluence/bin/start-confluence.sh", "run"]
